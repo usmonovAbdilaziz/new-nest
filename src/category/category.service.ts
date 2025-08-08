@@ -1,4 +1,8 @@
-import { NotFoundException, Injectable } from '@nestjs/common';
+import {
+  NotFoundException,
+  Injectable,
+  ConflictException,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectModel } from '@nestjs/sequelize';
@@ -12,6 +16,12 @@ export class CategoryService {
   ) {}
   async create(createCategoryDto: CreateCategoryDto) {
     try {
+      const existsCategory = await this.categoryModel.findOne({
+        where: { name: createCategoryDto.name },
+      });
+      if (!existsCategory) {
+        throw new ConflictException('Name already exists');
+      }
       const newCategory = await this.categoryModel.create({
         ...createCategoryDto,
       });

@@ -1,4 +1,8 @@
-import { NotFoundException, Injectable } from '@nestjs/common';
+import {
+  NotFoundException,
+  Injectable,
+  ConflictException,
+} from '@nestjs/common';
 import { CreateSalesmanDto } from './dto/create-salesman.dto';
 import { UpdateSalesmanDto } from './dto/update-salesman.dto';
 import { InjectModel } from '@nestjs/sequelize';
@@ -18,19 +22,19 @@ export class SalesmanService {
         where: { username },
       });
       if (salesman1) {
-        throw new NotFoundException('This user already exists');
+        throw new ConflictException('This user already exists');
       }
       const salesman2 = await this.salesmanModel.findOne({
         where: { phone_number },
       });
       if (salesman2) {
-        throw new NotFoundException('This phone number already exists');
+        throw new ConflictException('This phone number already exists');
       }
       const salesman3 = await this.salesmanModel.findOne({
         where: { email },
       });
       if (salesman3) {
-        throw new NotFoundException('This email already exists');
+        throw new ConflictException('This email already exists');
       }
       const hashPass = await hash(String(password), 7);
       const newSalesman = await this.salesmanModel.create({

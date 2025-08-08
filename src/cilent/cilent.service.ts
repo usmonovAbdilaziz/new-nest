@@ -1,4 +1,8 @@
-import { NotFoundException, Injectable } from '@nestjs/common';
+import {
+  NotFoundException,
+  Injectable,
+  ConflictException,
+} from '@nestjs/common';
 import { CreateCilentDto } from './dto/create-cilent.dto';
 import { UpdateCilentDto } from './dto/update-cilent.dto';
 import { handleError, successMessage } from 'src/helpers/response';
@@ -18,7 +22,7 @@ export class CilentService {
         where: { phone_number },
       });
       if (client) {
-        throw new NotFoundException('Client already exists');
+        throw new ConflictException('Client already exists');
       }
       const hashPass = await hash(String(password), 7);
 
